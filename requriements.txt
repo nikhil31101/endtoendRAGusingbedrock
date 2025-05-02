@@ -3,3 +3,5 @@ pypdf
 streamlit
 faiss-cpu
 boto3
+langchain_aws
+langchain_community
