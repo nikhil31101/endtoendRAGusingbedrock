@@ -82,8 +82,9 @@ def main():
         if st.button("Load Documents"):
             with st.spinner("Processing..."):
                 docs = get_documents()
-                get_vectorstore(docs)
-                st.success("Documents loaded and vector store created.")
+            vectorstore = get_vectorstore(docs)
+            vectorstore.save_local("faiss_index")  # <--- Save it here
+            st.success("Documents loaded and vector store created.")
 
         if st.button("send"):
             with st.spinner("Processing..."):
