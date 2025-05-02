@@ -57,14 +57,14 @@ prompt_template_instance = PromptTemplate(
 
 # Get LLM response
 def get_llm_response(llm, vectorstore_faiss, question):
+    retriever = vectorstore_faiss.as_retriever(search_kwargs={"k": 1})
     qa = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=vectorstore_faiss.as_retriever(),
-        search_kwargs={"k": 1},
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt_template_instance},
-    )
+    llm=llm,
+    chain_type="stuff",
+    retriever=retriever,
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": prompt_template_instance},
+)
     answer = qa({"query": question})
     return answer
 
@@ -83,16 +83,18 @@ def main():
             with st.spinner("Processing..."):
                 docs = get_documents()
             vectorstore = get_vectorstore(docs)
-            vectorstore.save_local("faiss_index")  # <--- Save it here
+            vectorstore.save_local("faiss_index")  # Save the FAISS index
             st.success("Documents loaded and vector store created.")
 
         if st.button("send"):
             with st.spinner("Processing..."):
-                vectorstore_faiss = FAISS.load_local("faiss_index", embeddings)
+                vectorstore_faiss = FAISS.load_local(
+                    "faiss_index",
+                    embeddings,
+                    allow_dangerous_deserialization=True  # Allow loading trusted pickle
+                )
                 llm = get_llm()
                 st.write(get_llm_response(llm, vectorstore_faiss, question))
-
-
 
 
 if __name__ == "__main__":
