@@ -1,3 +1,4 @@
+import os
 import boto3
 import streamlit as st
 from langchain_aws import BedrockLLM, BedrockEmbeddings
@@ -6,13 +7,20 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+from dotenv import load_dotenv
+
+aws_access_key_id = os.getenv("aws_access_key_id")
+aws_secret_access_key = os.getenv("aws_secret_access_key")
+region_name = os.getenv("region_name") 
 
 # Define custom prompt template
 custom_prompt = """You are a helpful assistant. Answer the question based on the provided context, but summarize with 250 words or less. If the answer is not in the context, say "I don't know."
 \n\nContext: {context}\n\nQuestion: {question}\n\nAnswer:"""
 
 # Initialize Bedrock client
-bedrock_client = boto3.client(service_name="bedrock-runtime", region_name="us-east-1")
+bedrock_client = boto3.client(service_name="bedrock-runtime", region_name=region_name,
+                              aws_access_key_id=aws_access_key_id,
+                             aws_secret_access_key=aws_secret_access_key)
 
 # Get embeddings
 embeddings = BedrockEmbeddings(
