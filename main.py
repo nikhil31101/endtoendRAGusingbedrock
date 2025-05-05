@@ -18,7 +18,7 @@ custom_prompt = """You are a helpful assistant. Answer the question based on the
 \n\nContext: {context}\n\nQuestion: {question}\n\nAnswer:"""
 
 # Initialize Bedrock client
-bedrock_client = boto3.client(service_name="bedrock-runtime", region_name=region_name,
+bedrock_client = boto3.client(service_name="bedrock-runtime", region_name="us-east-1",
                               aws_access_key_id=aws_access_key_id,
                              aws_secret_access_key=aws_secret_access_key)
 
